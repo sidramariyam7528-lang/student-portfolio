@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Portfolio</title>
+  <style>
+    :root {
+      --bg: #fff8f3;
+      --fg: #2b2140;
+      --muted: #6d6478;
+      --accent: #7c3aed;
+      --pink: #ec4899;
+      --card: rgba(255,255,255,.78);
+      --border: rgba(80,55,100,.12);
+      --shadow: 0 12px 30px rgba(74, 42, 105, .09);
+    }
+    body.dark {
+      --bg: #171321;
+      --fg: #f7efff;
+      --muted: #c2b6d2;
+      --card: rgba(42,34,57,.88);
+      --border: rgba(255,255,255,.12);
+      --shadow: 0 12px 30px rgba(0,0,0,.22);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+    body {
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      background: var(--bg); color: var(--fg); line-height: 1.6;
+      transition: background .25s, color .25s;
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background:
+        radial-gradient(circle at 8% 18%, rgba(167,139,250,.48), transparent 35%),
+        radial-gradient(circle at 88% 22%, rgba(244,114,182,.38), transparent 32%),
+        radial-gradient(circle at 48% 90%, rgba(253,186,116,.25), transparent 36%);
+    }
+    a { color: inherit; }
+    .topbar {
+      position: sticky; top: 0; z-index: 100; background: var(--card);
+      border-bottom: 1px solid var(--border); backdrop-filter: blur(16px);
+    }
+    .nav {
+      max-width: 1120px; margin: auto; padding: 14px 22px;
+      display: flex; align-items: center; justify-content: space-between; gap: 18px;
+    }
+    .logo { font-size: 1.35rem; font-weight: 900; text-decoration: none; letter-spacing: -.06em; }
+    .logo span { color: var(--accent); }
+    #menu { display: flex; align-items: center; gap: 5px; list-style: none; }
+    #menu a {
+      display: block; padding: 8px 11px; text-decoration: none; border-radius: 999px;
+      font-size: .88rem; color: var(--muted); transition: .2s;
+    }
+    #menu a:hover, #menu a.active { background: var(--accent); color: white; }
+    .nav-actions { display: flex; gap: 8px; align-items: center; }
+    .icon-btn, .burger {
+      border: 1px solid var(--border); background: var(--card); color: var(--fg);
+      border-radius: 12px; padding: 9px 12px; cursor: pointer; font-size: 1rem;
+    }
+    .burger { display: none; }
+    main { max-width: 1080px; padding: 0 22px; margin: auto; }
+    section { padding: 82px 0; }
+    .hero { min-height: 82vh; display: flex; flex-direction: column; justify-content: center; }
+    .eyebrow { text-transform: uppercase; letter-spacing: .16em; color: var(--muted); font-size: .75rem; font-weight: 800; }
+    h1 { font-size: clamp(2.7rem, 7vw, 5.7rem); line-height: 1.05; letter-spacing: -.065em; margin: 16px 0; }
+    .gradient-text {
+      background: linear-gradient(100deg, #7c3aed, #ec4899, #f97316);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .hero p { max-width: 620px; color: var(--muted); font-size: 1.08rem; }
+    .buttons { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 25px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      border: 1px solid var(--border); border-radius: 999px; padding: 11px 18px;
+      font: inherit; font-weight: 700; text-decoration: none; cursor: pointer;
+      background: var(--card); color: var(--fg); transition: transform .2s, box-shadow .2s;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .btn.primary { color: white; border: 0; background: linear-gradient(100deg, #7c3aed, #ec4899); }
+    .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-top: 38px; max-width: 820px; }
+    .stat, .card, .panel {
+      background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+      box-shadow: var(--shadow);
+    }
+    .stat { padding: 19px; text-align: center; }
+    .stat strong { display: block; font-size: 1.8rem; line-height: 1.2; }
+    .stat span { font-size: .8rem; color: var(--muted); }
+    .section-head { margin-bottom: 28px; }
+    h2 { font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -.045em; line-height: 1.15; }
+    .section-head p { color: var(--muted); margin-top: 8px; }
+    h3 { line-height: 1.3; margin-bottom: 8px; }
+    .about-grid { display: grid; grid-template-columns: 1.3fr .9fr; gap: 22px; }
+    .panel { padding: 26px; }
+    .panel p { color: var(--muted); }
+    .facts { display: grid; gap: 12px; }
+    .fact { display: flex; justify-content: space-between; gap: 18px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .fact span:first-child { color: var(--muted); }
+    .fact span:last-child { text-align: right; font-weight: 700; }
+    .cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .card { padding: 23px; transition: transform .25s; }
+    .card:hover { transform: translateY(-5px); }
+    .card p { color: var(--muted); font-size: .95rem; }
+    .timeline { border-left: 2px solid var(--accent); margin-left: 8px; padding-left: 25px; display: grid; gap: 25px; }
+    .timeline-item { position: relative; }
+    .timeline-item::before {
+      content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--pink);
+      position: absolute; left: -32px; top: 7px; box-shadow: 0 0 0 5px rgba(236,72,153,.13);
+    }
+    .timeline-item p, .timeline-item small { color: var(--muted); }
+    .skills-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 28px; }
+    .skill { margin: 18px 0; }
+    .skill-label { display: flex; justify-content: space-between; font-weight: 700; font-size: .9rem; margin-bottom: 7px; }
+    .track { height: 8px; background: var(--border); border-radius: 20px; overflow: hidden; }
+    .fill { height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg,#7c3aed,#ec4899); transition: width 1.2s ease; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 13px; }
+    .tag { background: rgba(124,58,237,.1); color: var(--fg); border: 1px solid var(--border); padding: 5px 10px; border-radius: 999px; font-size: .8rem; }
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; }
+    .filter { border: 1px solid var(--border); background: var(--card); color: var(--fg); padding: 8px 14px; border-radius: 999px; cursor: pointer; }
+    .filter.active { background: var(--accent); color: white; border-color: var(--accent); }
+    .project-meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0; }
+    .project-link { display: inline-block; margin-top: 12px; font-weight: 800; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+    .count { color: var(--muted); font-size: .9rem; margin-bottom: 12px; }
+    .contact-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 22px; }
+    form { display: grid; gap: 14px; }
+    label { font-weight: 700; font-size: .9rem; }
+    input, textarea {
+      width: 100%; margin-top: 6px; padding: 12px 14px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--fg); border-radius: 12px; font: inherit;
+    }
+    textarea { min-height: 130px; resize: vertical; }
+    .error { color: #e11d48; font-size: .85rem; min-height: 1.2em; }
+    .success { color: #15803d; font-size: .9rem; }
+    footer { text-align: center; color: var(--muted); padding: 28px 20px 40px; border-top: 1px solid var(--border); }
+    #toTop { position: fixed; right: 22px; bottom: 22px; display: none; z-index: 20; }
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity .7s, transform .7s; }
+    .reveal.in { opacity: 1; transform: none; }
+    .resume-modal { position: fixed; inset: 0; background: rgba(20,12,30,.65); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 200; }
+    .resume-modal.open { display: flex; }
+    .resume-sheet { background: white; color: #272033; border-radius: 16px; width: min(650px,100%); max-height: 90vh; overflow: auto; padding: 30px; }
+    .resume-sheet p { margin: 8px 0; }
+    .resume-sheet hr { margin: 12px 0; border: 0; border-top: 1px solid #ddd; }
+    @media (max-width: 820px) {
+      #menu { display: none; position: absolute; top: 62px; left: 12px; right: 12px; padding: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow); flex-direction: column; align-items: stretch; }
+      #menu.open { display: flex; }
+      #menu a { padding: 11px 14px; }
+      .burger { display: block; }
+      .cards { grid-template-columns: repeat(2,1fr); }
+      .about-grid, .skills-grid, .contact-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      main { padding: 0 17px; }
+      section { padding: 62px 0; }
+      .hero { min-height: 78vh; }
+      .stats { grid-template-columns: repeat(2,1fr); }
+      .cards { grid-template-columns: 1fr; }
+      .nav { padding: 12px 16px; }
+      .panel, .card { padding: 20px; }
+    }
+    @media print {
+      body * { visibility: hidden; }
+      .resume-sheet, .resume-sheet * { visibility: visible; }
+      .resume-modal { display: block !important; position: static; background: white; padding: 0; }
+      .resume-sheet { width: 100%; max-height: none; box-shadow: none; }
+      .resume-sheet .buttons { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav">
+      <a class="logo" href="#home">XXXX<span>.</span></a>
+      <ul id="menu">
+        <li><a class="active" href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#education">Education</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#achievements">Achievements</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">☾</button>
+        <button class="burger" id="burger" aria-label="Open navigation">☰</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <span class="eyebrow">B.Sc. Artificial Intelligence</span>
+      <h1>Hi, I'm <span id="heroName">XXXX</span>.<br><span class="gradient-text">I build for the web.</span></h1>
+      <p>I'm a <strong><span id="typing">Web Developer</span></strong></p>
+      <p style="margin-top:14px">A curious student passionate about clean interfaces, practical web projects and learning something new every day.</p>
+      <div class="buttons">
+        <a class="btn primary" href="#projects">View Projects ↗</a>
+        <button class="btn" id="openResume">Download Resume ↓</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong data-count="6">0</strong><span>Projects</span></div>
+        <div class="stat"><strong data-count="8">0</strong><span>Technologies</span></div>
+        <div class="stat"><strong data-count="1">0</strong><span>Hackathon</span></div>
+        <div class="stat"><strong data-count="2">0</strong><span>Year of study</span></div>
+      </div>
+    </section>
+
+    <section id="about" class="reveal">
+      <div class="section-head"><h2>About Me</h2><p>A little about who I am.</p></div>
+      <div class="about-grid">
+        <div class="panel">
+          <p>I am a curious and disciplined student who enjoys turning ideas into working websites. Through web development and practice, I am learning HTML, CSS and JavaScript and applying them to real projects such as a campus event portal. I enjoy exploring AI concepts and collaborating with classmates.</p>
+          <h3 style="margin-top:26px">What I Do</h3>
+          <p>Where I put my skills to work.</p>
+          <div class="cards" style="grid-template-columns:repeat(3,1fr);margin-top:16px">
+            <div class="card"><div>🎨</div><h3>Web Design</h3><p>Clean layouts</p></div>
+            <div class="card"><div>⚡</div><h3>Frontend</h3><p>Interactive pages</p></div>
+            <div class="card"><div>🤖</div><h3>AI Basics</h3><p>Learning AI</p></div>
+          </div>
+        </div>
+        <div class="panel facts">
+          <div class="fact"><span>Name</span><span>XXXX</span></div>
+          <div class="fact"><span>Register No.</span><span>XXXXXXXXXX</span></div>
+          <div class="fact"><span>Course</span><span>B.Sc. Artificial Intelligence</span></div>
+          <div class="fact"><span>Year</span><span>II Year</span></div>
+          <div class="fact"><span>Location</span><span>Tamil Nadu, India</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="education" class="reveal">
+      <div class="section-head"><h2>Education</h2><p>My academic journey so far.</p></div>
+      <div class="panel timeline">
+        <div class="timeline-item"><h3>B.Sc. Artificial Intelligence</h3><p>XXXX College</p><small>2025–2028 · Currently in II Year</small></div>
+        <div class="timeline-item"><h3>Fundamentals of Web Development</h3><p>TN Skills · Oracle · Adroit Technologies</p><small>2026 · Level 2 Hackathon participant</small></div>
+        <div class="timeline-item"><h3>Higher Secondary Education</h3><p>Tamil Nadu State Board</p><small>Completed 2025</small></div>
+      </div>
+    </section>
+
+    <section id="skills" class="reveal">
+      <div class="section-head"><h2>Skills</h2><p>Technologies I work with.</p></div>
+      <div class="panel skills-grid">
+        <div>
+          <div class="skill"><div class="skill-label"><span>HTML</span><span>90%</span></div><div class="track"><div class="fill" data-width="90%"></div></div></div>
+          <div class="skill"><div class="skill-label"><span>CSS</span><span>85%</span></div><div class="track"><div class="fill" data-width="85%"></div></div></div>
+          <div class="skill"><div class="skill-label"><span>JavaScript</span><span>75%</span></div><div class="track"><div class="fill" data-width="75%"></div></div></div>
+          <div class="skill"><div class="skill-label"><span>Python</span><span>60%</span></div><div class="track"><div class="fill" data-width="60%"></div></div></div>
+          <div class="skill"><div class="skill-label"><span>Responsive Design</span><span>85%</span></div><div class="track"><div class="fill" data-width="85%"></div></div></div>
+        </div>
+        <div>
+          <h3>Soft skills</h3><div class="tags"><span class="tag">Problem Solving</span><span class="tag">Teamwork</span><span class="tag">Communication</span><span class="tag">Time Management</span><span class="tag">Fast Learner</span></div>
+          <h3 style="margin-top:26px">Tools</h3><div class="tags"><span class="tag">Git & GitHub</span><span class="tag">VS Code</span><span class="tag">Vercel</span><span class="tag">Chrome DevTools</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="reveal">
+      <div class="section-head"><h2>Projects</h2><p>Filter by technology to explore my work.</p></div>
+      <div class="filters" id="filters"></div>
+      <p class="count" id="count">Projects found</p>
+      <div class="cards" id="projGrid"></div>
+    </section>
+
+    <section id="achievements" class="reveal">
+      <div class="section-head"><h2>Achievements</h2><p>Milestones from my learning journey.</p></div>
+      <div class="cards">
+        <article class="card"><span class="eyebrow">2026</span><h3>TN Skills Level 2 Hackathon</h3><p>Participated in the Fundamentals of Web Development hackathon conducted with Oracle and Adroit Technologies.</p></article>
+        <article class="card"><span class="eyebrow">Deployed</span><h3>Convene on Vercel</h3><p>Built and deployed a campus event registration portal with search and category filters.</p></article>
+        <article class="card"><span class="eyebrow">Training</span><h3>HTML, CSS & JavaScript</h3><p>Completed hands-on training in responsive layouts, DOM scripting and form validation.</p></article>
+      </div>
+    </section>
+
+    <section id="contact" class="reveal">
+      <div class="section-head"><h2>Get in touch</h2><p>Have an opportunity or a question? Send me a message.</p></div>
+      <div class="contact-grid">
+        <div class="panel"><h3>Let's connect ✨</h3><p>I'm happy to hear about projects, learning opportunities and collaborations.</p><p style="margin-top:15px">Email: yourname@example.com</p><p>Location: Tamil Nadu, India</p></div>
+        <div class="panel">
+          <form id="cf" novalidate>
+            <label for="n">Name *</label><input id="n" name="name" required placeholder="Your name">
+            <label for="e">Email *</label><input id="e" name="email" type="email" required placeholder="you@example.com">
+            <p class="error" id="ee"></p>
+            <label for="m">Message *</label><textarea id="m" name="message" required placeholder="Write your message..."></textarea>
+            <p class="error" id="me"></p>
+            <button class="btn primary" type="submit">Send Message</button>
+            <p id="formStatus" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Made with 💜 · Student Portfolio · <span id="year"></span></footer>
+  <button class="btn primary" id="toTop" aria-label="Back to top">↑</button>
+
+  <div class="resume-modal" id="resumeModal" role="dialog" aria-modal="true" aria-label="Resume preview">
+    <div class="resume-sheet">
+      <h2>XXXX</h2><p>B.Sc. Artificial Intelligence · XXXX College · Register No. XXXXXXXXXX</p><hr>
+      <h3>Objective</h3><p>Motivated student seeking opportunities to apply web development and AI skills on real-world projects.</p><hr>
+      <h3>Education</h3><p>• B.Sc. Artificial Intelligence, XXXX College (2025–2028)</p><p>• Higher Secondary, Tamil Nadu State Board (2025)</p><hr>
+      <h3>Skills</h3><p>HTML, CSS, JavaScript, Python (basics), Git & GitHub, responsive design</p><hr>
+      <h3>Projects</h3><p>• Convene – Campus Event Registration Portal</p><p>• Student Portfolio Website</p><p>• To-Do List App</p><p>• Weather Dashboard</p><hr>
+      <h3>Achievements</h3><p>Participant, TN Skills Level 2 Hackathon – Fundamentals of Web Development</p>
+      <div class="buttons"><button class="btn primary" id="printResume">Save as PDF / Print</button><button class="btn" id="closeResume">Close</button></div>
+    </div>
+  </div>
+
+  <script>
+    // Edit these sample project objects to add your own projects.
+    const projects = [
+      { t: "Convene - Event Portal", d: "Campus event discovery portal with search, category filters and a registration area.", tech: ["HTML", "CSS", "JavaScript"], u: "#" },
+      { t: "Student Portfolio", d: "A responsive portfolio with dynamic projects, filtering and a downloadable resume.", tech: ["HTML", "CSS", "JavaScript"], u: "#" },
+      { t: "To-Do List App", d: "Add, complete and delete daily tasks, with updates in the browser.", tech: ["HTML", "JavaScript"], u: "#" },
+      { t: "Weather Dashboard", d: "A weather dashboard interface with a clean card layout.", tech: ["JavaScript", "CSS"], u: "#" },
+      { t: "Python Practice", d: "Small beginner-friendly Python programs and exercises.", tech: ["Python"], u: "#" },
+      { t: "Responsive Landing Page", d: "A mobile-friendly landing page built with modern CSS layouts.", tech: ["HTML", "CSS"], u: "#" }
+    ];
+
+    const $ = selector => document.querySelector(selector);
+    let cur = "All";
+    const techs = ["All", "HTML", "CSS", "JavaScript", "Python"];
+
+    function renderFilters() {
+      $("#filters").innerHTML = techs.map(t =>
+        `<button class="filter ${t === cur ? "active" : ""}" data-t="${t}">${t}</button>`
+      ).join("");
+    }
+
+    function render() {
+      const list = projects.filter(p => cur === "All" || p.tech.includes(cur));
+      $("#count").textContent = `${list.length} project${list.length === 1 ? "" : "s"} found`;
+      $("#projGrid").innerHTML = list.map(p => `
+        <article class="card">
+          <div class="project-meta">${p.tech.map(t => `<span class="tag">${t}</span>`).join("")}</div>
+          <h3>${p.t}</h3><p>${p.d}</p>
+          <a class="project-link" href="${p.u}" target="_blank" rel="noopener">View project ↗</a>
+        </article>`).join("");
+    }
+
+    $("#filters").addEventListener("click", e => {
+      if (e.target.dataset.t) {
+        cur = e.target.dataset.t;
+        renderFilters();
+        render();
+      }
+    });
+    renderFilters();
+    render();
+
+    // Mobile navigation
+    $("#burger").addEventListener("click", () => $("#menu").classList.toggle("open"));
+    $("#menu").addEventListener("click", e => {
+      if (e.target.closest("a")) $("#menu").classList.remove("open");
+    });
+
+    // Light/dark theme toggle
+    $("#themeToggle").addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      $("#themeToggle").textContent = document.body.classList.contains("dark") ? "☀" : "☾";
+    });
+
+    // Animated counters
+    document.querySelectorAll("[data-count]").forEach(el => {
+      const target = Number(el.dataset.count);
+      let value = 0;
+      const step = Math.max(1, Math.ceil(target / 35));
+      const timer = setInterval(() => {
+        value = Math.min(target, value + step);
+        el.textContent = value;
+        if (value >= target) clearInterval(timer);
+      }, 35);
+    });
+
+    // Reveal sections and animate skill bars when they enter the screen
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in");
+          entry.target.querySelectorAll(".fill").forEach(fill => fill.style.width = fill.dataset.width);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: .15 });
+    document.querySelectorAll(".reveal, #skills").forEach(el => observer.observe(el));
+
+    // Highlight the current navigation section
+    const sections = document.querySelectorAll("main section[id]");
+    const navObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          document.querySelectorAll("#menu a").forEach(a => {
+            a.classList.toggle("active", a.getAttribute("href") === "#" + entry.target.id);
+          });
+        }
+      });
+    }, { rootMargin: "-35% 0px -55% 0px" });
+    sections.forEach(section => navObserver.observe(section));
+
+    // Contact form validation (demo only; it does not send an email)
+    $("#cf").addEventListener("submit", e => {
+      e.preventDefault();
+      $("#ee").textContent = "";
+      $("#me").textContent = "";
+      $("#formStatus").textContent = "";
+      const name = $("#n").value.trim();
+      const email = $("#e").value.trim();
+      const message = $("#m").value.trim();
+      let valid = true;
+      if (!name) { $("#formStatus").textContent = "Please enter your name."; valid = false; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+        $("#ee").textContent = "Please enter a valid email address."; valid = false;
+      }
+      if (!message) { $("#me").textContent = "Message is required."; valid = false; }
+      if (valid) {
+        $("#formStatus").className = "success";
+        $("#formStatus").textContent = "Thank you! The form is valid. (Demo only: no message was sent.)";
+        e.target.reset();
+      } else {
+        $("#formStatus").className = "error";
+      }
+    });
+
+    // Resume preview and print-to-PDF
+    $("#openResume").addEventListener("click", () => $("#resumeModal").classList.add("open"));
+    $("#closeResume").addEventListener("click", () => $("#resumeModal").classList.remove("open"));
+    $("#resumeModal").addEventListener("click", e => {
+      if (e.target.id === "resumeModal") $("#resumeModal").classList.remove("open");
+    });
+    $("#printResume").addEventListener("click", () => window.print());
+
+    // Back to top
+    window.addEventListener("scroll", () => {
+      $("#toTop").style.display = window.scrollY > 450 ? "block" : "none";
+    });
+    $("#toTop").addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+    $("#year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
